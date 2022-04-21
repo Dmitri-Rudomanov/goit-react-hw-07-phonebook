@@ -1,32 +1,21 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import contactReducer from './phonebook-reducer';
-import { persistStore, persistReducer, PERSIST } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-
-const middleware = [
-  ...getDefaultMiddleware({
-    serializableCheck: {
-      ignoredActions: [PERSIST],
-    },
-  }),
-];
-const persistConfig = {
-  key: 'contacts',
-  storage,
-  blacklist: ['filter'],
-};
-const ContactsPersistedReducer = persistReducer(persistConfig, contactReducer);
+import { setupListeners } from '@reduxjs/toolkit/query';
+import { contactsApi } from './phonebook-reducer';
 
 const store = configureStore({
   reducer: {
-    contacts: ContactsPersistedReducer,
+    contacts: contactReducer,
+    [contactsApi.reducerPath]: contactsApi.reducer,
   },
-  middleware,
+  middleware: getDefaultMiddleware => [
+    ...getDefaultMiddleware(),
+    contactsApi.middleware,
+  ],
 });
-const persistor = persistStore(store);
+setupListeners(store.dispatch);
 
 const exportedStor = {
   store,
-  persistor,
 };
 export default exportedStor;
