@@ -44,15 +44,14 @@ const filterSlice = createSlice({
     },
   },
 });
-
 const contactReducer = combineReducers({
   filter: filterSlice.reducer,
 });
+
 export const {
   useFetchContactsQuery,
   useDeleteContactMutation,
   useCreateContactMutation,
 } = contactsApi;
-
 export const { changeFilter } = filterSlice.actions;
 export default contactReducer;
